@@ -518,6 +518,128 @@ char firstUniqChar(string s) {
 
 
 
+## 分治
+
+### [07. 重建二叉树](https://leetcode-cn.com/problems/zhong-jian-er-cha-shu-lcof/)
+
+**题意描述**：输入某二叉树的前序遍历和中序遍历的结果，请构建该二叉树并返回其根节点。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+
+示例：
+
+```latex
+Input: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+Output: [3,9,20,null,null,15,7]
+```
+
+限制：0 <= 节点个数 <= 5000
+
+**解题思路**：分治思想。前序遍历的首元素是根节点 `root` 的值。利用哈希表 `hash` 存储中序遍历中值与索引的映射，提高查询效率。`preL > preR` 表示已经越过了叶节点，函数返回。
+
+```cpp
+class Solution {
+public:
+    unordered_map<int, int> hash;
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int n = preorder.size();
+        if (n == 0) return nullptr;
+        for (int i = 0; i < n; i++) {
+            hash[inorder[i]] = i;
+        }
+        return dfs(preorder, 0, n - 1, inorder, 0, n - 1);
+    }
+    TreeNode* dfs(vector<int>& preorder, int preL, int preR, vector<int>& inorder, int inL, int inR) {
+        if (preL > preR || inL > inR) return nullptr;
+        TreeNode* root = new TreeNode(preorder[preL]);
+        int index = hash[preorder[preL]];
+        root->left = dfs(preorder, preL + 1, index - inL + preL, inorder, inL, index - 1);
+        root->right = dfs(preorder, index - inL + preL + 1, preR, inorder, index + 1, inR);
+        return root;
+    }
+};
+```
+
+
+
+### [16. 数值的整数次方](https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/)
+
+**题意描述**：实现 [pow(*x*, *n*)](https://www.cplusplus.com/reference/valarray/pow/) ，即计算 x 的 n 次幂函数（即，$x^n$）。不得使用库函数，同时不需要考虑大数问题。
+
+示例：
+
+```latex
+输入：x = 2.00000, n = 10
+输出：1024.00000
+
+输入：x = 2.00000, n = -2
+输出：0.25000
+解释：2-2 = 1/22 = 1/4 = 0.25
+```
+
+注意：
+
+- $-100.0 < x < 100.0$
+- $-2^{31} <= n <= 2^{31}-1$
+- $-10^4 <= x^n <= 10^4$
+
+**解题思路**：分治思想，快速幂模板题。
+
+```cpp
+double myPow(double x, int n) {
+    long long k = n;
+    bool is_minus = false;
+    if (k < 0) {
+        is_minus = true;
+        k = -k;
+    }
+    double res = 1;
+    while(k) {
+        if (k & 1) res *= x;
+        x *= x;
+        k >>= 1;
+    }
+    return is_minus ? 1 / res : res;
+}
+```
+
+
+
+### [33. 二叉搜索树的后序遍历序列](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/)
+
+**题意描述**：输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 `true`，否则返回 `false`。假设输入的数组的任意两个数字都互不相同。
+
+示例：
+
+```latex
+输入: [1,3,2,6,5]
+输出: true
+```
+
+**解题思路**：基于分治的思想，递归实现。
+
+- `l >= r` 表示到达叶子节点，返回 `true`；
+- 左子树节点值应当小于根节点的值 `rootVal`，且右子树节点值应当大于根节点的值 `rootVal`；
+
+```cpp
+class Solution {
+public:
+    bool verifyPostorder(vector<int>& postorder) {
+        return dfs(postorder, 0, postorder.size() - 1);
+    }
+    bool dfs(vector<int>& postorder, int l, int r) {
+        if (l >= r) return true;
+        int rootVal = postorder[r];
+        int k = l;
+        while(k < r && postorder[k] < rootVal) k++;     // k 应指向右子树首个节点的值
+        for (int i = k; i < r; i++) {
+            if (postorder[i] < rootVal) return false;
+        }
+        return dfs(postorder, l, k - 1) && dfs(postorder, k, r - 1);
+    }
+};
+```
+
+
+
 ## 搜索与回溯算法
 
 ### [32 - I. 从上到下打印二叉树](https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-lcof/)
@@ -1885,6 +2007,127 @@ public:
 
 
 
+## 位运算
+
+### [15. 二进制中1的个数](https://leetcode-cn.com/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/)
+
+**题意描述**：编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 '1' 的个数（也被称为 [汉明重量](http://en.wikipedia.org/wiki/Hamming_weight)).）。
+
+**解题思路**：`n&(n-1)` 每次移除最低位上的比特 `1`。
+
+```cpp
+int hammingWeight(uint32_t n) {
+    int res = 0;
+    while(n) {
+        res++;
+        n &= n - 1;
+    }
+    return res;
+}
+```
+
+
+
+### [65. 不用加减乘除做加法](https://leetcode-cn.com/problems/bu-yong-jia-jian-cheng-chu-zuo-jia-fa-lcof/)
+
+**题意描述**：写一个函数，求两个整数之和，要求在函数体内不得使用 “+”、“-”、“*”、“/” 四则运算符号。
+
+示例：
+
+```latex
+输入: a = 1, b = 1
+输出: 2
+```
+
+**提示：**
+
+- `a`, `b` 均可能是负数或 0
+- 结果不会溢出 32 位整数
+
+**解题思路**：不进位加法：`a^b`，进位：`a&b`。 
+
+```cpp
+int add(int a, int b) {
+    while(b) {
+        int sum = a ^ b;
+        int c = (unsigned int)(a & b) << 1;
+        a = sum;
+        b = c;
+    }
+    return a;
+}
+```
+
+
+
+### [56 - I. 数组中数字出现的次数](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
+
+**题意描述**：一个整型数组 `nums` 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
+
+示例：
+
+```latex
+输入：nums = [4,1,4,6]
+输出：[1,6] 或 [6,1]
+```
+
+**解题思路**：位运算，假设答案分别为 $a$ 和 $b$，且 `t = a ^ b`。
+
+- 遍历数组先求 $t$ ；
+- 求 $t$ 的第几位上是 $1$；
+- 遍历数组求 $a$，`b = t ^ a`；
+
+```cpp
+vector<int> singleNumbers(vector<int>& nums) {
+    int t = 0;
+    for (int &num : nums) {
+        t ^= num;
+    }
+    int i = 0;
+    while(!(t >> i & 1)) {
+        i++;
+    }
+    int a = 0;
+    for (int &num : nums) {
+        if (num >> i & 1) a ^= num;
+    }
+    return {a, t ^ a};
+}
+```
+
+
+
+### [56 - II. 数组中数字出现的次数 II](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-ii-lcof/)
+
+**题意描述**：在一个数组 `nums` 中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
+
+示例：
+
+```latex
+输入：nums = [3,4,3,3]
+输出：4
+```
+
+**解题思路**：$res$ 的第 $i$ 个二进制位就是数组中所有元素的第 $i$ 个二进制位之和除以 $3$ 的余数。
+
+```cpp
+int singleNumber(vector<int>& nums) {
+    int res = 0;
+    for (int i = 0; i < 32; i++) {
+        int t = 0;
+        for (int &num : nums) {
+            t += (num >> i & 1);
+        }
+        res += (t % 3) << i;
+    }
+    return res;
+}
+```
+
+
+
+
+
 ## 数学
 
 ### [64. 求1+2+…+n](https://leetcode-cn.com/problems/qiu-12n-lcof/)
@@ -1910,7 +2153,208 @@ int sumNums(int n) {
 
 
 
+### [39. 数组中出现次数超过一半的数字](https://leetcode-cn.com/problems/shu-zu-zhong-chu-xian-ci-shu-chao-guo-yi-ban-de-shu-zi-lcof/)
+
+**题意描述**：数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+示例：
+
+```latex
+输入: [1, 2, 3, 2, 2, 2, 5, 4, 2]
+输出: 2
+```
+
+**解题思路**：一共三种解法，其中摩尔投票法为最优解法。
+
+- 解法1：数组由小到大排序，取中位数；
+- 解法2：哈希表统计数组元素出现次数；
+- **解法3**：摩尔投票法，票数正负抵消；
+
+```cpp
+int majorityElement(vector<int>& nums) {
+    int res = nums[0], cnt = 1;
+    for (int i = 1; i < nums.size(); i++) {
+        if (cnt == 0) {
+            res = nums[i];
+            cnt++;
+        } else {
+            if (res == nums[i]) cnt++;
+            else cnt--;
+        }
+    }
+    return res;
+}
+```
 
 
 
+### [66. 构建乘积数组](https://leetcode-cn.com/problems/gou-jian-cheng-ji-shu-zu-lcof/)
+
+**题意描述**：给定一个数组 $A[0,1,…,n-1]$，请构建一个数组 $B[0,1,…,n-1]$，其中 $B[i]$ 的值是数组 $A$ 中除了下标 $i$ 以外的元素的积, 即 $B[i]=A[0]×A[1]×…×A[i-1]×A[i+1]×…×A[n-1]$。不能使用除法。
+
+示例：
+
+```latex
+输入: [1,2,3,4,5]
+输出: [120,60,40,30,24]
+```
+
+**提示：**
+
+- 所有元素乘积之和不会溢出 32 位整数
+- `a.length <= 100000`
+
+**解题思路**：构建前后缀差分数组。
+
+```cpp
+vector<int> constructArr(vector<int>& a) {
+    if (a.empty()) return {};
+    int n = a.size();
+    vector<int> b(n, 1);
+    for (int i = 1, t = a[0]; i < n; i++) {
+        b[i] = t;
+        t *= a[i];
+    }
+
+    for (int i = n - 2, t = a[n - 1]; i >= 0; i--) {
+        b[i] *= t;
+        t *= a[i];
+    }
+    return b;
+}
+```
+
+
+
+### [14- I. 剪绳子](https://leetcode-cn.com/problems/jian-sheng-zi-lcof/)
+
+**题意描述**：将一根长度为 $n$ 的绳子剪成整数长度的 $m$ 段（$m,n$ 都是整数，$n,m>1$），每段绳子的长度记为 $k[0],k[1]...k[m-1]$ 。请问  $k[0] \times k[1] \times...\times k[m-1]$ 可能的最大乘积是多少。
+
+示例：
+
+```latex
+输入: 10
+输出: 36
+解释: 10 = 3 + 3 + 4, 3 × 3 × 4 = 36
+```
+
+提示：`2 <= n <= 58`
+
+**解题思路 1**：**贪心**：将一个正整数 $N$ 拆分成若干个整数有有限种拆法，所以存在最大乘积。<u>重要推论</u>：1）所有绳段长度相等时，乘积最大；2）最优绳段长度为 3；
+
+假设 $N=n_1 + n_2 + ... + n_k$，并且 $n_1 \times n_2 \times n_3 \times ... \times n_k$ 是最大乘积。
+
+- 显然，$1$ 不会出现在其中；
+- 如果对于某个 $n_i \geq 5$，那么将 $n_i$ 拆分成 $3 + (n_i - 3)$ ，有 $3 * (n_i - 3) > n_i$
+- 如果 $n_i = 4$ ，拆分成 $2 + 2$ 乘积不变，所以假设没有 $4$
+- 如果有 $3$ 个连续以上 $2$，那么 $3 \times 3 > 2 \times 2 \times 2$ ，所以替换成 $3$ 乘积更大；
+
+```cpp
+int cuttingRope(int n) {
+    if (n <= 3) return n - 1;
+    int res = 1;
+    if (n % 3 == 1) {       // 不能有 4，2 * 2 > 3 * 1
+        res = 4;
+        n -= 4;
+    } else if (n % 3 == 2) {
+        res = 2;
+        n -= 2;
+    } 
+    while(n) {      // e 处取
+        res *= 3;
+        n -= 3;
+    }
+    return res;
+}
+```
+
+**解题思路 2**：**动态规划**。定义状态 `f[i]` 为将长度为 $i$ 的绳子剪成若干段后各段长度乘积的最大值。剪第一刀时，我们有 $n - 1$ 种可能的选择，也就是剪出来的第一段绳子的可能长度分别是 $1,2,..,n-1$。因此 $f[i] = max(f[i], max(j * (i - j), j * f[i - j]))$。
+
+减去第一段长度为 $j$ 的绳子之后，可以选择不再剪断，也可选择继续往下剪。若是继续剪，则需要继续求子问题 $f[i - j]$。
+
+```cpp
+int cuttingRope(int n) {
+    vector<int> f(n + 1, 0);
+    f[2] = 1;
+    for (int i = 3; i <= n; i++) {
+        for (int j = 2; j < i; j++) {
+            f[i] = max(f[i], max(j * (i - j), j * f[i - j]));
+        }
+    }
+    return f[n];
+}
+```
+
+
+
+### [57 - II. 和为s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
+
+**题意描述**：输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
+
+示例：
+
+```latex
+输入：target = 15
+输出：[[1,2,3,4,5],[4,5,6],[7,8]]
+```
+
+限制：`1 <= target <= 10^5`
+
+**解题思路**：**双指针（滑动窗口）**。设连续正整数序列的左边界 $left$ 和右边界 $right$ ，则可构建滑动窗口从左向右滑动。循环中，每轮判断滑动窗口内的元素和与目标值 $target$ 的大小关系。若相等则记录，若大于 $target$ 则移动左边界 $left$ （以减少窗口内的元素和），若小于 $target$ 则移动右边界 $right$ （以增加窗口内的元素和）。
+
+```cpp
+vector<vector<int>> findContinuousSequence(int target) {
+    vector<vector<int>> res;
+    int left = 1, right = 2, sum = 3;
+    while(left < right) {
+        if (sum == target) {
+            vector<int> path;
+            for (int i = left; i <= right; i++) {
+                path.push_back(i);
+            }
+            res.push_back(path);
+        } 
+        if (sum >= target) {
+            sum -= left;
+            left++;
+        } else {
+            right++;
+            sum += right;
+        }
+    }
+    return res;
+}
+```
+
+
+
+### [62. 圆圈中最后剩下的数字](https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/)
+
+**题意描述**：$0,1,···,n-1$ 这 $n$ 个数字排成一个圆圈，从数字 $0$ 开始，每次从这个圆圈里删除第 $m$ 个数字（删除后从下一个数字开始计数）。求出这个圆圈里剩下的最后一个数字。
+
+示例：
+
+```latex
+0、1、2、3、4这5个数字组成一个圆圈，从数字0开始每次删除第3个数字，则删除的前4个数字依次是2、0、4、1，因此最后剩下的数字是3。
+```
+
+**解题思路**：约瑟夫环问题。由下往上递推：$(\text{当前索引编号} index + m) \mod \text{上一轮元素个数} i$ 
+
+```cpp
+int lastRemaining(int n, int m) {
+    int index = 0;
+    for (int i = 2; i <= n; i++) {
+        index = (index + m) % i;
+    }
+    return index;
+}
+```
+
+```cpp
+// 简化版
+int lastRemaining(int n, int m) {
+    if (n == 1) return 0;
+    return (lastRemaining(n - 1, m) + m) % n;
+}
+```
 
