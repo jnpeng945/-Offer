@@ -2358,3 +2358,81 @@ int lastRemaining(int n, int m) {
 }
 ```
 
+
+
+## 模拟
+
+### [29. 顺时针打印矩阵](https://leetcode-cn.com/problems/shun-shi-zhen-da-yin-ju-zhen-lcof/)
+
+**题意描述**：输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+
+示例：
+
+```latex
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+输出：[1,2,3,6,9,8,7,4,5]
+```
+
+限制：`0 <= matrix.length <= 100`，`0 <= matrix[i].length <= 100`
+
+**解题思路**：代码中以 `st` 数组来标记元素是否被访问过，尽管有点浪费空间。
+
+```cpp
+vector<int> spiralOrder(vector<vector<int>>& matrix) {
+    if (matrix.empty() || matrix[0].empty()) return {};
+    int m = matrix.size(), n = matrix[0].size();
+    vector<int> res;
+    vector<vector<bool>> st(m, vector<bool>(n, false));
+    const int dx[4] = {-1, 0, 1, 0}, dy[4] = {0, 1, 0, -1};
+    int x = 0, y = 0, d = 1;
+    for (int i = 0; i < m * n; i++) {
+        res.emplace_back(matrix[x][y]);
+        st[x][y] = true;
+        int a = x + dx[d], b = y + dy[d];
+        if (a < 0 || a >= m || b < 0 || b >= n || st[a][b]) {
+            d = (d + 1) % 4;
+            a = x + dx[d], b = y + dy[d];
+        }
+        x = a, y = b;
+    }
+    return res;
+}
+```
+
+
+
+### [31. 栈的压入、弹出序列](https://leetcode-cn.com/problems/zhan-de-ya-ru-dan-chu-xu-lie-lcof/)
+
+**题意描述**：输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。假设压入栈的所有数字均不相等。
+
+示例：
+
+```latex
+输入：pushed = [1,2,3,4,5], popped = [4,5,3,2,1]
+输出：true
+解释：我们可以按以下顺序执行：
+push(1), push(2), push(3), push(4), pop() -> 4,
+push(5), pop() -> 5, pop() -> 3, pop() -> 2, pop() -> 1
+```
+
+**解题思路**：见代码。
+
+```cpp
+class Solution {
+public:
+    bool validateStackSequences(vector<int>& pushed, vector<int>& popped) {
+        if (pushed.size() != popped.size()) return false;
+        stack<int> stk;
+        int i = 0;
+        for (auto x : pushed) {
+            stk.push(x);
+            while(!stk.empty() && stk.top() == popped[i]) {
+                stk.pop();
+                i++;
+            }
+        }
+        return stk.empty();
+    }
+};
+```
+
