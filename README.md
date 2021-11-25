@@ -1,4 +1,4 @@
-剑指 Offer 系列题目解题思路回顾。
+《剑指 Offer 第 2 版》 系列题目解题思路回顾。
 
 <!--more-->
 
@@ -78,6 +78,82 @@ public:
     
     int min() {
         return stk2.top();
+    }
+};
+```
+
+
+
+### [59 - I. 滑动窗口的最大值](https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/) 
+
+**题意描述**：给定一个数组 `nums` 和滑动窗口的大小 `k`，请找出所有滑动窗口里的最大值。
+
+示例：
+
+```latex
+输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+输出: [3,3,5,5,6,7] 
+```
+
+注意：*k* 总是有效的，在输入数组不为空的情况下，1 ≤ k ≤ 输入数组的大小。
+
+**解题思路**：单调队列，滑动窗口。
+
+```cpp
+vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+    deque<int> deq;
+    vector<int> res;
+    for (int i = 0; i < nums.size(); i++) {
+        if (deq.size() && deq.front() <= i - k) deq.pop_front();
+        while(deq.size() && nums[deq.back()] < nums[i]) deq.pop_back();
+        deq.push_back(i);
+        if (i >= k - 1) res.push_back(nums[deq.front()]);
+    }
+    return res;
+}
+```
+
+
+
+### [59 - II. 队列的最大值](https://leetcode-cn.com/problems/dui-lie-de-zui-da-zhi-lcof/)
+
+**题意描述**：请定义一个队列并实现函数 `max_value` 得到队列里的最大值，要求函数 `max_value`、`push_back` 和 `pop_front` 的均摊时间复杂度都是 $O(1)$ 。若队列为空，`pop_front` 和 `max_value` 需要返回 $-1$。
+
+示例：
+
+```latex
+输入: 
+["MaxQueue","push_back","push_back","max_value","pop_front","max_value"]
+[[],[1],[2],[],[],[]]
+输出: [null,null,null,2,1,2]
+```
+
+**解题思路**：双端队列 + 队列。
+
+```cpp
+class MaxQueue {
+public:
+    queue<int> que;
+    deque<int> deq;
+    MaxQueue() {
+    }
+    
+    int max_value() {
+        return que.empty() ? -1 : deq.front();
+    }
+    
+    void push_back(int value) {
+        que.push(value);
+        while(deq.size() && deq.back() < value) deq.pop_back();
+        deq.push_back(value);
+    }
+    
+    int pop_front() {
+        if (que.empty()) return -1;
+        int res = que.front();
+        que.pop();
+        if (deq.front() == res) deq.pop_front();
+        return res;
     }
 };
 ```
@@ -341,9 +417,102 @@ string reverseLeftWords(string s, int k) {
 5. 剩下的都是合法情况；
 
 ```cpp
+bool isNumber(string s) {
+    // 去除行首行尾空格
+    int i = 0, j = s.size() - 1;
+    while (i <= j && s[i] == ' ') i++;
+    while (i <= j && s[j] == ' ') j--;
+    if (i > j) return false;
+    s = s.substr(i, j - i + 1);
+    // 行首如果只有一个正负号，直接忽略
+    if (s[0] == '+' || s[0] == '-') s = s.substr(1);
+    if (s.empty() || s[0] == '.' && s.size() == 1) return false;
+
+    int dot = 0, e = 0;
+    for (int i = 0; i < s.size(); i++) {
+        if (s[i] >= '0' && s[i] <= '9') continue;
+        else if (s[i] == '.')
+        {
+            dot++;
+            if (e || dot > 1) return false;     // . 多余一个，. 在 e 后面出现
+        }
+        else if (s[i] == 'e' || s[i] == 'E') 
+        {
+            e++;
+            if (i + 1 == s.size() || !i || e > 1 || i == 1 && s[0] == '.') return false;
+            // . 后面紧跟正负号，但是正负号后面为空
+            if (s[i + 1] == '+' || s[i + 1] == '-') {
+                if (i + 2 == s.size()) return false;
+                i++;
+            }
+        }
+        else return false;
+    }
+    return true;
+}
 ```
 
 
+
+### [67. 把字符串转换成整数](https://leetcode-cn.com/problems/ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu-lcof/)
+
+**题意描述**：写一个函数 StrToInt，实现把字符串转换成整数这个功能。不能使用 `atoi` 或者其他类似的库函数。
+
+- 函数需要移除开头空格字符，从第一个非空格的字符开始；
+- 当第一个非空字符为 `+` 或者 `-` 时，需要将该符号和后面尽可能多的连续数字组合起来，作为该整数的正负号；
+- 若第一个非空字符是数字，则直接将其余之后连续的数字字符组合起来，形成整数；
+- 有效的整数部分之后多余的字符应当忽略；
+- 假设该字符串中的第一个非空格字符不是一个有效整数字符、字符串为空或字符串仅包含空白字符时，则你的函数不需要进行转换。
+
+在任何情况下，若函数不能进行有效的转换，返回 0；
+
+**解题思路**：根据题意需要考虑以下四种情况：
+
+1. 首部空格：删除即可；
+2. 符号位：`+`, `-`, `无符号位`；新建一个变量保存符号位，返回前判断正负号；
+3. 非数字字符：遇到首个非数字的字符，立即返回；
+4. 数字字符：
+   - 字符转数字：ASCII 码直接相减即可；
+   - 数字拼接：从左向右遍历数字，设当前位字符为 `c`，数字结果为 `res`：`res = 10*res+c-'0'`
+
+**数字越界处理：**
+
+题目要求返回的数值范围在 $[-2^{31}, 2^{31} - 1]$ ，因此需要考虑数字越界问题。而题目指出环境只能存储 `32` 位大小的有符号整数，因此判断数字越界时，要保持 `res` 在 `int` 类型的取值范围内。
+
+在每轮数字拼接前，判断 `res` 在此轮拼接之后是否超过 $2147483647$ ，若超过则加上符号位直接返回。设数字拼接边界为 $214748364$，则以下两种情况越界：
+$$
+\left \{ 
+\begin{align}{}
+& res>214748364 \qquad \qquad \text{情况1:执行拼接} 10\times res \geq 2147483650 \text{越界} \\ 
+& res = 214748364,x>7 \quad \text{情况2:拼接后是}2147483648\text{或者}2147483649越界\\ 
+\end{align}
+\right.
+$$
+
+
+```cpp
+int strToInt(string str) {
+    int i = 0;
+    while(i < str.size() && str[i] == ' ') i++;
+    if (i == str.size()) return 0;      // 全是空格
+
+    bool is_minus = false;              // 记录正负
+    if (str[i] == '-') is_minus = true, i++;
+    else if (str[i] == '+') i++;
+
+    if (str[i] < '0' || str[i] > '9') return 0;     // 首个非空字符为非数字字符
+
+    int res = 0, boundry = INT_MAX / 10;
+    for (int j = i; j < str.size(); j++) {
+        if (str[j] < '0' || str[j] > '9') break;    // 非法字符停止遍历
+        if (res > boundry || res == boundry && str[j] > '7') {
+            return is_minus ? INT_MIN : INT_MAX;
+        }
+        res = res * 10 + (str[j] - '0');
+    }
+    return is_minus ? -res : res;
+}
+```
 
 
 
