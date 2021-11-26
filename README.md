@@ -1571,6 +1571,81 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
 
 
 
+### [37. 序列化二叉树](https://leetcode-cn.com/problems/xu-lie-hua-er-cha-shu-lcof/)
+
+**题意描述**：请实现两个函数，分别用来序列化和反序列化二叉树。你需要设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+
+示例：
+
+```latex
+输入：root = [1,2,3,null,null,4,5]
+输出：[1,2,3,null,null,4,5]
+```
+
+**解题思路**：
+
+```cpp
+```
+
+
+
+### [38. 字符串的排列](https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/)
+
+**题意描述**：输入一个字符串，打印出该字符串中字符的所有排列。你可以以任意顺序返回这个字符串数组，但里面不能有重复元素。
+
+示例：
+
+```latex
+输入：s = "abc"
+输出：["abc","acb","bac","bca","cab","cba"]
+```
+
+限制：`1 <= s 的长度 <= 8`
+
+**解题思路**：对于一个长度为 $n$ 的字符串（假设字符互不重复），其排列方案数有：$n \times (n - 1) \times (n - 2) \times ... \times 2 \times 1$
+
+当字符串存在重复的字符时，排列方案也存在重复的排列方案。为排除重复方案，需要在固定某位字符的时候，保证每种字符只在此位固定一次，即遇到重复字符时不交换，直接跳过。
+
+<img src = "https://pic.leetcode-cn.com/1599403497-GATdFr-Picture2.png" width = "500px" />
+
+
+
+```cpp
+class Solution {
+public:
+    vector<string> res;
+    string str;
+    int state;			// 记录访问状态
+    vector<string> permutation(string s) {
+        sort(s.begin(), s.end());		// 记得先排序，方便去重
+        dfs(s, 0);
+        return res;
+    }
+    void dfs(string& s, int u) {
+        if (u == s.size()) {
+            res.push_back(str);
+            return;
+        }
+        for (int i = 0; i < s.size(); i++) {
+            if (i && s[i - 1] == s[i] && !(state & (1 << (i - 1)))) {
+                continue;
+            }
+            if (!(state & (1 << i))) {
+                state ^= (1 << i);
+                str += s[i];
+                dfs(s, u + 1);
+                str.pop_back();
+                state ^= (1 << i);
+            }
+        }
+    }
+};
+```
+
+
+
+
+
 
 
 ## 动态规划
