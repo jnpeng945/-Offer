@@ -857,6 +857,109 @@ public:
 
 
 
+### [17. 打印从1到最大的n位数](https://leetcode-cn.com/problems/da-yin-cong-1dao-zui-da-de-nwei-shu-lcof/)
+
+**题意描述**：输入数字 `n`，按顺序打印出从 1 到最大的 n 位十进制数。比如输入 3，则打印出 1、2、3 一直到最大的 3 位数 999。
+
+示例：
+
+```latex
+输入: n = 1
+输出: [1,2,3,4,5,6,7,8,9]
+```
+
+说明：用返回一个整数列表来代替打印；n 为正整数
+
+**解题思路**：打印数范围 $[1,10^n-1]$
+
+<img src = "https://pic.leetcode-cn.com/83f4b5930ddc1d42b05c724ea2950ee7f00427b11150c86b45bd88405f8c7c87-Picture1.png" width = 500px />
+
+```cpp
+class Solution {
+private:
+    vector<int> res;
+    string s;
+public:
+    vector<int> printNumbers(int n) {
+        s.resize(n, ' ');
+        dfs(n, 0);
+        return res;
+    }
+    void dfs(int n, int u) {
+        if (u == n) {
+            save();
+            return;
+        }
+        for (int i = 0; i <= 9; i++) {
+            s[u] = i + '0';
+            dfs(n, u + 1);
+        }
+    }
+    // 除去首部的 0
+    void save() {
+        int ptr = 0;
+        while(ptr < s.size() && s[ptr] == '0') ptr++;
+        if (ptr != s.size()) {
+            res.emplace_back(stoi(s.substr(ptr)));
+        }
+    }
+};
+```
+
+
+
+### [51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
+
+**题意描述**：在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组，求出这个数组中的逆序对的总数。
+
+示例：
+
+```latex
+输入: [7,5,6,4]
+输出: 5
+```
+
+限制：`0 <= 数组长度 <= 50000`
+
+**解题思路**：归并排序。
+
+```cpp
+class Solution {
+private:
+    vector<int> tmp;
+public:
+    int reversePairs(vector<int>& nums) {
+        tmp.resize(nums.size(), 0);
+        return merge_sort(nums, 0, nums.size() - 1);
+    }
+    int merge_sort(vector<int>& nums, int l, int r) {
+        if (l >= r) return 0;
+        int res = 0;
+        int mid = (l + r) / 2;
+        res += merge_sort(nums, l, mid);
+        res += merge_sort(nums, mid + 1, r);
+
+        int i = l, j = mid + 1, k = 0;
+        while (i <= mid && j <= r) {
+            if (nums[i] <= nums[j]) tmp[k++] = nums[i++];
+            else {
+                tmp[k++] = nums[j++];
+                res += mid - i + 1;
+            }
+        }
+        while (i <= mid) tmp[k++] = nums[i++];
+        while (j <= r) tmp[k++] = nums[j++];
+
+        for (int i = l, j = 0; i <= r; i++, j++) nums[i] = tmp[j];
+        return res;
+    }
+};
+```
+
+
+
+
+
 ## 搜索与回溯算法
 
 ### [32 - I. 从上到下打印二叉树](https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-lcof/)
@@ -1585,6 +1688,72 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
 **解题思路**：
 
 ```cpp
+class Solution {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        string res;
+        dfs_s(root, res);
+        return res;
+    }
+    
+    void dfs_s(TreeNode* root, string& res) {
+        if (!root) {
+            res += "null ";                     // null + 空格表示
+            return;
+        }
+        
+        res += to_string(root->val) + ' ';      // 节点值 + 空格表示
+        
+        // 递归处理左子树和右子树
+        dfs_s(root->left, res);
+        dfs_s(root->right, res);
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        int u = 0;      // 当前遍历字符串中的位置
+        return dfs_d(data, u);
+    }
+    
+    TreeNode* dfs_d(string& data, int& u) {
+        if (u == data.size()) {
+            return nullptr;
+        }
+        
+        /*
+        // data 中字符的下标从 0 到 data.size() - 1, data[data.size() - 1] 的位置是空格
+        // 最后一次递归结束，u = k + 1，所以 u == data.size() 为函数终止条件
+        */
+        
+        int k = u;      // 记录空格的位置
+        while (data[k] != ' ') k++;
+        
+        if (data[u] == 'n') {       // 当前遍历的是 "null"，此时 u 指向 'n', k 指向 "null" 后的空格
+            u = k + 1;
+            return nullptr;         // 结束本次递归，返回空指针
+        }
+        
+        int val = 0;
+        bool is_minus = false;      // 判断当前值是否是负数
+        for (int i = u; i < k; ++i) {
+            if (data[i] == '-') {
+                is_minus = true;
+                continue;
+            }
+            val = val * 10 + data[i] - '0';
+        }
+        
+        if (is_minus) val = -val;       // 负数特判
+        u = k + 1;                      // 下一个需要遍历的位置
+        
+        TreeNode* root = new TreeNode(val);
+        root->left = dfs_d(data, u);
+        root->right = dfs_d(data, u);
+        return root;
+    }
+};
 ```
 
 
@@ -1641,10 +1810,6 @@ public:
     }
 };
 ```
-
-
-
-
 
 
 
@@ -1885,6 +2050,277 @@ int lengthOfLongestSubstring(string s) {
     return res;
 }
 ```
+
+
+
+### [19. 正则表达式匹配](https://leetcode-cn.com/problems/zheng-ze-biao-da-shi-pi-pei-lcof/)
+
+**题意描述**：实现一个函数用来匹配包含 `'.'`和 `'*'` 的正则表达式。模式中的字符 `'.'` 表示任意一个字符，而 `'*'` 表示它前面的字符可以出现任意次（含0次）。模板串需要匹配整个字符串。
+
+示例：
+
+```latex
+s = "aa"
+p = "a*"
+输出: true
+
+s = "aab"
+p = "c*a*b"
+输出: true
+```
+
+- `s` 可能为空，且只包含从 `a-z` 的小写字母；
+- `p` 可能为空，且只包含从 `a-z` 的小写字母以及字符 `.` 和 `*` ，无连续的 `*`
+
+**解题思路 1**：动态规划。
+
+**状态表示** `f[i][j]`：
+
+- 集合：所有 $s[1] \sim s[i]$ 和 $p[1] \sim p[j]$ 的匹配方案，这里假设下标从 $1$ 开始，并有 `f[0][0] = true`。
+
+- 属性：`bool` 是否存在一个合法方案
+
+**状态计算**：
+
+- $p[j] \neq *$  
+
+  `f[i][j] = (s[i] == p[j] || p[j] == '.') && f[i - 1][j - 1]`
+
+- $p[j] = *$
+
+  `f[i][j] = f[i][j-2] || f[i-1][j-2] && (s[i] == p[j-1] || p[j-1] == '.') || f[i-2][j-2] && (s[i] == p[j-1] && s[i-1] == p[j-1] || p[j-1] == '.') || ...`
+
+  上述式子表示：`p[j-1]p[j]` 匹配 $s$ 中 $0$ 个字符的情况 || 匹配 $s$ 中 $1$ 个字符的情况 || 匹配 $s$ 中 $2$ 个字符的情况 || ...
+
+  状态转移过程优化到 $O(1)$ 时间：考虑 `f[i-1][j]` 的情况
+
+  `f[i-1][j] = f[i-1][j-2] || f[i-2][j-2] && (s[i-1] == p[j-1] || p[j-1] == '.') || ...`
+
+  **找到共同点：**
+
+  `f[i][j] = f[i][j-2] || f[i-1][j] && (s[i] == p[j-1] || p[j-1] == '.')`
+
+循环枚举 $i$ 从 $0 \sim n$ ，$j$ 从 $1 \sim m$ ，因为 `f[0][j]` 有意义。
+
+此时状态数量是 $nm$，转移需要 $O(1)$ 时间，总的时间复杂度就是 $n^2$ 级别。  
+
+```cpp
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int n = s.size(), m = p.size();
+        vector<vector<bool>> f(n + 1, vector<bool>(m + 1, false));
+        s = ' ' + s, p = ' ' + p;
+        f[0][0] = true;
+        for (int i = 0; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (j + 1 <= m && p[j + 1] == '*') continue;
+                if (i && p[j] != '*') {
+                    f[i][j] = f[i - 1][j - 1] && (s[i] == p[j] || p[j] == '.');
+                } else if (p[j] == '*'){
+                    f[i][j] = f[i][j - 2] || i && f[i - 1][j] && (s[i] == p[j - 1] || p[j - 1] == '.');
+                }
+            }
+        }
+        return f[n][m];
+    }
+};
+```
+
+
+
+**解题思路 2**：动态规划（记忆化搜索），$n,m$ 分别表示 $s,p$ 的长度，状态转移复杂度是 $O(1)$，总的时间复杂度为 $O(nm)$。
+
+**状态表示** `f[i][j]`：
+
+- 集合： $s[i,...]$ 和 $p[j...]$ 的匹配方案。
+
+- 属性：`bool` 是否存在一个合法方案
+
+**状态计算**：
+
+由于 `.` 可以匹配任意字符，`*` 表示其前面的字符可以出现任意次数。
+
+1. $p[j+1]$ 不是 `*`
+
+   ```cpp
+   f[i][j] = (s[i] == p[j] || p[j] == '.') && f[i + 1][j +1]
+   ```
+
+2. $p[j + 1]$ 是 `*` 
+
+   ```cpp
+   // p[j]p[j+1] 表示 p[j] 出现 0次 || ... 出现 1 次 || ... 出现 2 次
+   f[i][j] = f[i][j + 2] || (s[i] == p[j] || p[j] == '.') && f[i + 1][j]
+   ```
+
+<u>第二种情况解释</u>：
+
+最直观的转移方式是：枚举通配符 `*` 可以匹配多少个 `p[j]`，只要有一种情况可以匹配，则 `f[i][j]` 就为真。但是，我们可以发现，`f[i][j]` 除了枚举 $0$ 个 `p[j]` 之外，其余的枚举操作都包含在 `f[i + 1][j]` 中，因此我们只要判断 `(s[i] == p[j] || p[j] == '.') && f[i + 1][j]` 即可。
+
+边界：`f[n][m] = true`
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> f;
+    int n, m;
+    bool isMatch(string s, string p) {
+        n = s.size();
+        m = p.size();
+        f = vector<vector<int>>(n + 1, vector<int>(m + 1, -1));
+        return dfs(0, 0, s, p);
+    }
+    bool dfs(int x, int y, string& s, string& p) {
+        if (f[x][y] != -1) return f[x][y];
+        if (y == m) {
+            return f[x][y] = x == n;
+        }
+        bool first_match = x < n && (s[x] == p[y] || p[y] == '.');
+        bool ans;
+        if (y + 1 < m && p[y + 1] == '*') {
+            ans = dfs(x, y + 2, s, p) || first_match && dfs(x + 1, y, s, p);
+        } else {
+            ans = first_match && dfs(x + 1, y + 1, s, p);
+        }
+        return f[x][y] = ans;
+    }
+};
+```
+
+
+
+### [49. 丑数](https://leetcode-cn.com/problems/chou-shu-lcof/)
+
+**题意描述**：丑数是指：只包含质因子 `2,3,5` 的数。求按照从小到大的顺序的第 $n$ 个丑数。
+
+示例：
+
+```latex
+输入: n = 10
+输出: 12
+解释: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 是前 10 个丑数。
+```
+
+**解题思路**：从小到大枚举每一个丑数，并用指针索引 `a,b,c` 分别指示由 `2,3,5` 因子转移而来的丑数位置。
+
+```cpp
+int nthUglyNumber(int n) {
+    vector<int> dp(n, 1);
+    int a = 0, b = 0, c = 0;
+    for (int i = 1; i < n; i++) {
+        dp[i] = min(2 * dp[a], min(3 * dp[b], 5 * dp[c]));
+        if (dp[i] == 2 * dp[a]) a++;
+        if (dp[i] == 3 * dp[b]) b++;
+        if (dp[i] == 5 * dp[c]) c++;
+    }
+    return dp[n - 1];
+}
+```
+
+
+
+### [60. n个骰子的点数](https://leetcode-cn.com/problems/nge-tou-zi-de-dian-shu-lcof/)
+
+**题意描述**：将一个骰子投掷 $n$ 次，获得的总点数为 $s$ ，$s$ 的可能范围是 $n \sim 6n$ 。输入 $n$ ，打印出 $s$ 的所有可能的值出现的概率。用一个浮点数数组返回答案，其中第 $i$ 个元素代表这 $n$ 个骰子所能掷出的点数集合中第 $i$ 小的那个的概率。
+
+示例：
+
+```latex
+输入: 2
+输出: [0.02778,0.05556,0.08333,0.11111,0.13889,0.16667,0.13889,0.11111,0.08333,0.05556,0.02778]
+```
+
+限制：`1 <= n <= 11`
+
+**解题思路 1**：DFS。`dfs(n, s)`：一共投掷了 $n$ 次，总和是 $s$ 的情况下的方案数目。（**TLE**）
+
+```cpp
+class Solution {
+public:
+    vector<double> dicesProbability(int n) {
+        vector<int> nums;
+        for (int i = n; i <= n * 6; i++) {
+            nums.push_back(dfs(n, i));       // 投掷 n 次，总和是 i 的方案数目
+        }
+        vector<double> res(nums.size());
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+        for (int i = 0; i < nums.size(); i++) {
+            res[i] = (double)nums[i] / sum;
+        }
+        return res;
+    }
+    int dfs(int n, int sum) {
+        if (sum < n) return 0;
+        if (n == 0) return !sum;
+        int res = 0;
+        for (int i = 1; i <= 6; i++) {
+            res += dfs(n - 1, sum - i);
+        }
+        return res;
+    }
+};
+```
+
+**解题思路 2**：动态规划。`f[i][j]`：前 `i` 次，总和是 `j` 的方案数。由于第 `i` 次可能扔出的点数为 $1 \sim 6$，所以：
+$$
+f[i][j] = f[i - 1][j - 1] + f[i - 1][j - 2] + f[i - 1][j - 3]+f[i - 1][j - 4]+ f[i - 1][j - 5] + f[i - 1][j - 6]
+$$
+，我们只需要用到最后一次的结果，可以使用滚动数组优化空间。
+
+```cpp
+// 优化前
+vector<double> dicesProbability(int n) {
+    vector<vector<int>> f(n + 1, vector<int>(n * 6 + 1, 0));
+    f[0][0] = 1;
+    for (int i = 1; i <= n; i++) {      // 枚举 n 次
+        for (int j = 1; j <= i * 6; j++) {      // 枚举总点数
+            for (int k = 1; k <= min(6, j); k++) {      // 最后一次投掷的点数
+                f[i][j] += f[i - 1][j - k];
+            }
+        }
+    }
+    vector<int> res;
+    for (int i = n; i <= n * 6; i++) {
+        res.push_back(f[n][i]);
+    }
+    int sum = accumulate(res.begin(), res.end(), 0);
+    vector<double> ans(res.size(), 0);
+    for (int i = 0; i < res.size(); i++) {
+        ans[i] = (double)res[i] / sum;
+    }
+    return ans;
+}
+// 优化后
+vector<double> dicesProbability(int n) {
+    vector<int> dp(n * 6 + 1, 0);
+    for (int i = 1; i <= 6; i++) dp[i] = 1;     // DP初始值，表示1个骰子扔出的可能数为 1~6
+    for (int i = 2; i <= n; i++) {              // 第 2 ~ n 次投掷
+        for (int j = 6 * i; j >= 0; j--) {      // 投掷总点数
+            dp[j] = 0;
+            for (int k = 6; k >= 1; k--) {      // 上一次投掷结果
+                if (j - k < 0) continue;
+                dp[j] += dp[j - k];
+            }
+        }
+    }
+
+    vector<int> res(dp.begin() + n, dp.end());
+
+    int sum = accumulate(res.begin(), res.end(), 0);
+    vector<double> ans(res.size(), 0);
+    for (int i = 0; i < res.size(); i++) {
+        ans[i] = (double)res[i] / sum;
+    }
+    return ans;
+}
+```
+
+
+
+
+
+
 
 
 
@@ -2579,6 +3015,37 @@ int cuttingRope(int n) {
 
 
 
+### [14- II. 剪绳子 II](https://leetcode-cn.com/problems/jian-sheng-zi-ii-lcof/)
+
+**题意描述**：将一根长度为 $n$ 的绳子剪成整数长度的 $m$ 段（$m,n$ 都是整数，$n,m>1$），每段绳子的长度记为 $k[0],k[1]...k[m-1]$ 。请问  $k[0] \times k[1] \times...\times k[m-1]$ 可能的最大乘积是多少。
+
+答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+
+提示：`2 <= n <= 1000`
+
+**解题思路**：本题只能数学推导出答案。
+
+```cpp
+int cuttingRope(int n) {
+    if (n < 4) return n - 1;
+    long long res = 1;
+    if (n % 3 == 1) {
+        res = 4;
+        n -= 4;
+    } else if (n % 3 == 2) {
+        res = 2;
+        n -= 2;
+    }
+    while(n) {
+        res = (res* 3) % 1000000007;
+        n -= 3;
+    }
+    return res;
+}
+```
+
+
+
 ### [57 - II. 和为s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
 
 **题意描述**：输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
@@ -2649,6 +3116,35 @@ int lastRemaining(int n, int m) {
     return (lastRemaining(n - 1, m) + m) % n;
 }
 ```
+
+
+
+### [43. 1～n 整数中 1 出现的次数](https://leetcode-cn.com/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/)
+
+**题意描述**：输入一个整数 $n$ ，求 $1～n$ 这 $n$ 个整数的十进制表示中 $1$ 出现的次数。$1 <= n < 2^{31}$
+
+**解题思路**：本题实际上是数位统计 DP 问题。具体可见算法基础课。假设有一个数为 $abcdefg$，我们需要分析其每一位上 $1$ 的情况，下面我们讨论 $d$ 所在位上 $1$ 的个数。
+
+- 假设 $d=0$，是一个组合问题，方案数为 $abc$ 的取值方案数乘以 $efg$ 的取值方案数，也即 $abc$ 可取 $000 \sim abc - 1$， $efg$ 可取 $000 \sim 999$， 得 $abc \times 1000$；
+- 假设 $d=1$，一共是 $abc \times 1000 + efg+1$ 种，为方便理解分为两种情况计算：
+  - $abc$ 取 $000 \sim abc - 1$， 则 $efg$ 取 $000 \sim 999$， 得 $abc \times 1000$；
+  - $abc$ 取 $abc$， 则 $efg$ 取 $000 \sim efg$， 得 $efg+1$；
+- 假设 $d>1$，即 $abc$ 可取 $000 \sim abc$， $efg$ 可取 $000 \sim 999$， 得 $(abc+1) \times 1000$；
+
+```cpp
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
