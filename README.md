@@ -3132,19 +3132,114 @@ int lastRemaining(int n, int m) {
 - 假设 $d>1$，即 $abc$ 可取 $000 \sim abc$， $efg$ 可取 $000 \sim 999$， 得 $(abc+1) \times 1000$；
 
 ```cpp
+class Solution {
+public:
+    int countDigitOne(int n) {
+        vector<int> nums;
+        while(n) {
+            nums.push_back(n % 10);
+            n /= 10;
+        }
+        int res = 0;
+        // 低位到高位逐位计算 1 出现次数
+        for (int i = 0; i < nums.size(); i++) {
+            int left = 0, right = 0, p = 1;
+            for (int j = nums.size() - 1; j >= i + 1; j--) {
+                left = left * 10 + nums[j];
+            }
+            for (int j = i - 1; j >= 0; j--) {
+                right = right * 10 + nums[j];
+                p *= 10;
+            }
+            if (nums[i] == 0) res += left * p;
+            else if (nums[i] == 1) res += left * p + right + 1;
+            else res += (left + 1) * p;
+        }
+        return res;
+    }
+};
 ```
 
 
 
+### [44. 数字序列中某一位的数字](https://leetcode-cn.com/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof/)
 
+**题意描述**：数字以 `0123456789101112131415…` 的格式序列化到一个字符序列中。在这个序列中，第 $5$ 位（从下标0开始计数）是 $5$，第 $13$ 位是 $1$，第 $19$ 位是$4$，等等。请写一个函数，求任意第 $n$ 位对应的数字。
 
+限制：`0 <= n < 2^31`
 
+**解题思路**：
 
+1. 将 $01234567...$ 中的每一位称为**数位**，记为 $n$；
+2. 将 $0,1,2,...$ 称为**数字**，记为 $num$；
+3. 数字 $1$ 是一个一位数，此数字的**位数**为 $1$，记为 $digit$；
+4. 每个 $digit$ 位数的起始数字（即：$1,10,...$），记为 $start$。
 
+<img src = "https://pic.leetcode-cn.com/2cd7d8a6a881b697a43f153d6c10e0e991817d78f92b9201b6ab71e44cb619de-Picture1.png" width = 500px />
 
+解题过程分为三步：
 
+1. 确定 $n$ 所在数字的位数 $digit$；
+2. 确定 $n$ 所在数字 $num$；
+3. 确定 $n$ 是 $num$ 中的哪一位数位，返回结果；
 
+---
 
+一、确定 $n$ 所在数字的位数 $digit$
+
+循环执行 $n$ 减去一位数、两位数、... 的数位数量 $count$，直到 $n \leq count$ 跳出。
+
+循环结束时，$n$ 是从每个 $digit$ 位数的起始数字 $start$ 开始计数的。
+
+```cpp
+int digit = 1, start = 1, count = 9;
+while(n > count) {
+    n -= count;
+    start *= 10;
+    digit++;
+    count = 9 * start * digit;
+}
+```
+
+二、确定 $n$ 所在数字 $num$
+
+所求数位在从数字 $start$ 开始的第 $\frac{n-1}{digit}$ 个数字中，$start$ 为第 $0$ 个数字；
+
+```cpp
+num = start + (n - 1) / digit;
+```
+
+三、确定 $n$ 是 $num$ 中的哪一位数位，返回结果
+
+所求数位为数字 $num$ 的第 $(n - 1) \% digit$ 位（数字的首个数位为第 $0$ 位）
+
+```cpp
+s = to_string(num);
+res = stoi(s[(n - 1) % digit]);
+```
+
+---
+
+- 时间复杂度 $O(\text{log }n)$：所求数位 $n$ 对应数字 $num$ 的位数 $digit$ 最大为  $O(\text{log }n)$ ；第一步最多循环  $O(\text{log }n)$ 次；第三步中将 $num$ 转化为字符串使用  $O(\text{log }n)$ 时间；因此总体为  $O(\text{log }n)$。
+- 空间复杂度  $O(\text{log }n)$：将数字 $num$ 转化为字符串 $s$ ，占用  $O(\text{log }n)$ 的空间。
+
+> 参考[Krahets 题解](https://leetcode-cn.com/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof/solution/mian-shi-ti-44-shu-zi-xu-lie-zhong-mou-yi-wei-de-6/)
+
+```cpp
+int findNthDigit(int n) {
+    int digit = 1;
+    long long start = 1, count = 9;
+    while(n > count) {
+        n -= count;
+        start *= 10;
+        digit++;
+        count = (long long)9 * start * digit;
+    }
+    int num = start + (n - 1) / digit;
+    string s = to_string(num);
+    return s[(n - 1) % digit] - '0';
+}
+```
 
 
 
