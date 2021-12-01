@@ -1,8 +1,20 @@
-《剑指 Offer 第 2 版》 系列题目解题思路回顾。
-
-[TOC]
+本文简要介绍算法复杂度分析，并给出《剑指 Offer 第 2 版》 系列题目的解题思路以及参考答案。
 
 <!--more-->
+
+## 算法复杂度
+
+算法复杂度旨在计算在输入数据量 $N$ 的情况下，算法的「时间使用」和「空间使用」情况；体现算法运行使用的时间和空间随「数据大小 $N$ 」而增大的速度。
+
+有关算法时间复杂度的详细叙述可见知乎高赞答案[^1]。
+
+根据从小到大排列，常见的算法时间复杂度主要有：
+$$
+O(1)<O(\log N)<O(N)<O(N \log N)<O\left(N^{2}\right)<O\left(2^{N}\right)<O(N !)
+$$
+本部分复杂度分析详细可见[^2]。
+
+
 
 ## 栈与队列
 
@@ -84,8 +96,6 @@ public:
 };
 ```
 
-
-
 ### [59 - I. 滑动窗口的最大值](https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/) 
 
 **题意描述**：给定一个数组 `nums` 和滑动窗口的大小 `k`，请找出所有滑动窗口里的最大值。
@@ -114,8 +124,6 @@ vector<int> maxSlidingWindow(vector<int>& nums, int k) {
     return res;
 }
 ```
-
-
 
 ### [59 - II. 队列的最大值](https://leetcode-cn.com/problems/dui-lie-de-zui-da-zhi-lcof/)
 
@@ -188,8 +196,6 @@ vector<int> reversePrint(ListNode* head) {
 }
 ```
 
-
-
 ### [24. 反转链表](https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof/)
 
 **题意描述**：输入一个链表的头节点，反转该链表并输出反转后链表的头节点。
@@ -228,8 +234,6 @@ ListNode* reverseList(ListNode* head) {
     return pre;
 }
 ```
-
-
 
 ### [35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
 
@@ -316,6 +320,18 @@ Node* copyRandomList(Node* head) {
 
 ## 字符串
 
+`vector` 数组实现：
+
+- 初始：空数组，分配常数空间；
+- `push_back()` ：若空间不够，重新申请 $2$ 倍大小的连续空间，拷贝到新空间，释放旧空间；
+- `pop_back()` ：若空间利用率不到 $25\%$ ，释放一半的空间；
+
+均摊 $O(1)$ 
+
+在空数组中连续插入 $n$ 个元素，总插入 / 拷贝次数为 $n+\frac{n}{2}+\frac{n}{4}+\frac{n}{8}... < 2n$ 
+
+一次扩容到下次释放，至少需要再删除 $(1-2\times0.25)*n=0.5n$ 次
+
 ### [05. 替换空格](https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/)
 
 **题意描述**：把字符串 `s` 中的每个空格替换成 `"%20"`。
@@ -356,8 +372,6 @@ string replaceSpace(string s) {
 }
 ```
 
-
-
 ### [58 - II. 左旋转字符串](https://leetcode-cn.com/problems/zuo-xuan-zhuan-zi-fu-chuan-lcof/)
 
 **题意描述**：实现字符串的左旋操作，也就是把字符串前面的若干个字符转移到字符串的尾部。
@@ -380,8 +394,6 @@ string reverseLeftWords(string s, int k) {
     return s;
 }
 ```
-
-
 
 ### [20. 表示数值的字符串](https://leetcode-cn.com/problems/biao-shi-shu-zhi-de-zi-fu-chuan-lcof/)
 
@@ -454,8 +466,6 @@ bool isNumber(string s) {
 }
 ```
 
-
-
 ### [67. 把字符串转换成整数](https://leetcode-cn.com/problems/ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu-lcof/)
 
 **题意描述**：写一个函数 StrToInt，实现把字符串转换成整数这个功能。不能使用 `atoi` 或者其他类似的库函数。
@@ -518,12 +528,6 @@ int strToInt(string str) {
 
 
 
-
-
-
-
-
-
 ## 查找
 
 ### [03. 数组中重复的数字](https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/)
@@ -569,8 +573,6 @@ int findRepeatNumber(vector<int>& nums) {
 }
 ```
 
-
-
 ### [53 - I. 在排序数组中查找数字 I](https://leetcode-cn.com/problems/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-lcof/)
 
 **题意描述**：统计一个数字在排序数组中出现的次数。
@@ -611,8 +613,6 @@ public:
 };
 ```
 
-
-
 ### [53 - II. 0～n-1中缺失的数字](https://leetcode-cn.com/problems/que-shi-de-shu-zi-lcof/)
 
 **题意描述**：一个长度为 $n-1$ 的递增排序数组中的所有数字都是唯一的，并且每个数字都在范围 $0 \sim n-1$ 之内。在范围 $0 \sim n-1$ 内的 $n$ 个数字中有且只有一个数字不在该数组中，请找出这个数字。
@@ -640,8 +640,6 @@ int missingNumber(vector<int>& nums) {
     return r;
 }
 ```
-
-
 
 ### [04. 二维数组中的查找](https://leetcode-cn.com/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
 
@@ -679,8 +677,6 @@ bool findNumberIn2DArray(vector<vector<int>>& matrix, int target) {
 }
 ```
 
-
-
 ### [11. 旋转数组的最小数字](https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/)
 
 **题意描述**：数组的旋转是指把数组最开始的若干个元素搬到数组的末尾。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。
@@ -706,8 +702,6 @@ int minArray(vector<int>& nums) {
     return nums[r];
 }
 ```
-
-
 
 ### [50. 第一个只出现一次的字符](https://leetcode-cn.com/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
 
@@ -777,8 +771,6 @@ public:
 };
 ```
 
-
-
 ### [16. 数值的整数次方](https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/)
 
 **题意描述**：实现 [pow(*x*, *n*)](https://www.cplusplus.com/reference/valarray/pow/) ，即计算 x 的 n 次幂函数（即，$x^n$）。不得使用库函数，同时不需要考虑大数问题。
@@ -820,8 +812,6 @@ double myPow(double x, int n) {
 }
 ```
 
-
-
 ### [33. 二叉搜索树的后序遍历序列](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/)
 
 **题意描述**：输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 `true`，否则返回 `false`。假设输入的数组的任意两个数字都互不相同。
@@ -856,8 +846,6 @@ public:
     }
 };
 ```
-
-
 
 ### [17. 打印从1到最大的n位数](https://leetcode-cn.com/problems/da-yin-cong-1dao-zui-da-de-nwei-shu-lcof/)
 
@@ -907,8 +895,6 @@ public:
     }
 };
 ```
-
-
 
 ### [51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
 
@@ -960,8 +946,6 @@ public:
 
 
 
-
-
 ## 搜索与回溯算法
 
 ### [32 - I. 从上到下打印二叉树](https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-lcof/)
@@ -999,8 +983,6 @@ vector<int> levelOrder(TreeNode* root) {
     return res;
 }
 ```
-
-
 
 ### [32 - II. 从上到下打印二叉树 II](https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-ii-lcof/)
 
@@ -1089,8 +1071,6 @@ vector<vector<int>> levelOrder(TreeNode* root) {
 }
 ```
 
-
-
 ### [26. 树的子结构](https://leetcode-cn.com/problems/shu-de-zi-jie-gou-lcof/)
 
 **题意描述**：输入两棵二叉树 A 和 B，判断 B 是不是 A 的子结构。B 是 A 的子结构， 即 A 中有出现和 B 相同的结构和节点值。（约定空树不是任意一个树的子结构）
@@ -1128,8 +1108,6 @@ public:
     }
 };
 ```
-
-
 
 ### [27. 二叉树的镜像](https://leetcode-cn.com/problems/er-cha-shu-de-jing-xiang-lcof/)
 
@@ -1217,8 +1195,6 @@ public:
 };
 ```
 
-
-
 ### [12. 矩阵中的路径](https://leetcode-cn.com/problems/ju-zhen-zhong-de-lu-jing-lcof/)
 
 **题意描述**：给定一个 `m x n` 二维字符网格 `board` 和一个字符串单词 `word` 。如果 `word` 存在于网格中，返回 `true` ；否则，返回 `false` 。单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
@@ -1263,8 +1239,6 @@ public:
     }
 };
 ```
-
-
 
 ### [13. 机器人的运动范围](https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof/)
 
@@ -1319,8 +1293,6 @@ public:
 };
 ```
 
-
-
 ### [34. 二叉树中和为某一值的路径](https://leetcode-cn.com/problems/er-cha-shu-zhong-he-wei-mou-yi-zhi-de-lu-jing-lcof/)
 
 **题意描述**：给你二叉树的根节点 `root` 和一个整数目标和 `targetSum` ，找出所有 **从根节点到叶子节点** 路径总和等于给定目标和的路径。**叶子节点** 是指没有子节点的节点。
@@ -1358,15 +1330,15 @@ public:
 };
 ```
 
-
-
 ### [36. 二叉搜索树与双向链表](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/)
 
 **题意描述**：输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。
 
 <img src="https://figs-1308257758.cos.ap-nanjing.myqcloud.com/img/20211116191037.png" width = 300px div align = center/>
 
-<img src="../$%7Bfigs%7D/20211116191120.png"/>" width = 300px div align = center/>
+<img src="https://assets.leetcode.com/uploads/2018/10/12/bstdllreturndll.png" width = 500px div align = center/>
+
+
 
 **解题思路**：二叉搜索树的中序遍历为**递增序列**。算法流程如下：
 
@@ -1408,8 +1380,6 @@ public:
 };
 ```
 
-
-
 ### [54. 二叉搜索树的第k大节点](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof/)
 
 **题意描述**：给定一棵二叉搜索树，请找出其中第 $k$ 大的节点。（1 ≤ k ≤ 二叉搜索树元素个数）
@@ -1448,8 +1418,6 @@ public:
     }
 };
 ```
-
-
 
 ### [55 - I. 二叉树的深度](https://leetcode-cn.com/problems/er-cha-shu-de-shen-du-lcof/)
 
@@ -1502,8 +1470,6 @@ int maxDepth(TreeNode* root) {
 }
 ```
 
-
-
 ### [55 - II. 平衡二叉树](https://leetcode-cn.com/problems/ping-heng-er-cha-shu-lcof/)
 
 **题意描述**：输入一棵二叉树的根节点，判断该树是不是平衡二叉树。
@@ -1540,9 +1506,7 @@ public:
 };
 ```
 
-
-
-### [68 - I. 二叉搜索树的最近公共祖先](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
+### [68 - I. 叉搜索树的最近公共祖先](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
 
 **题意描述**：给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。
 
@@ -1628,8 +1592,6 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
 }
 ```
 
-
-
 ### [68 - II. 二叉树的最近公共祖先](https://leetcode-cn.com/problems/er-cha-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
 
 **题意描述**：给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
@@ -1673,8 +1635,6 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
     return right;
 }
 ```
-
-
 
 ### [37. 序列化二叉树](https://leetcode-cn.com/problems/xu-lie-hua-er-cha-shu-lcof/)
 
@@ -1757,8 +1717,6 @@ public:
     }
 };
 ```
-
-
 
 ### [38. 字符串的排列](https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/)
 
@@ -1879,8 +1837,6 @@ public:
 };
 ```
 
-
-
 ### [10- II. 青蛙跳台阶问题](https://leetcode-cn.com/problems/qing-wa-tiao-tai-jie-wen-ti-lcof/)
 
 **题意描述**：每次可以跳 $1$ 级台阶也可以跳 $2$ 级台阶，求青蛙跳上一个 $n$ 级台阶总共有多少种跳法。答案对 $1e9+7$ 取模。
@@ -1898,8 +1854,6 @@ int numWays(int n) {
     return b;
 }
 ```
-
-
 
 ### [63. 股票的最大利润](https://leetcode-cn.com/problems/gu-piao-de-zui-da-li-run-lcof/)
 
@@ -1928,8 +1882,6 @@ int maxProfit(vector<int>& prices) {
 }
 ```
 
-
-
 ### [42. 连续子数组的最大和](https://leetcode-cn.com/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/)
 
 **题意描述**：输入一个整型数组，数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值。要求时间复杂度为O(n)。
@@ -1955,8 +1907,6 @@ int maxSubArray(vector<int>& nums) {
     return res;
 }
 ```
-
-
 
 ### [47. 礼物的最大价值](https://leetcode-cn.com/problems/li-wu-de-zui-da-jie-zhi-lcof/)
 
@@ -1987,8 +1937,6 @@ int maxValue(vector<vector<int>>& grid) {
     return f[m][n];
 }
 ```
-
-
 
 ### [46. 把数字翻译成字符串](https://leetcode-cn.com/problems/ba-shu-zi-fan-yi-cheng-zi-fu-chuan-lcof/)
 
@@ -2024,8 +1972,6 @@ int translateNum(int num) {
 }
 ```
 
-
-
 ### [48. 最长不含重复字符的子字符串](https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/)
 
 **题意描述**：给定一个字符串，求它的最长的不包含重复字符的子字符串的长度。
@@ -2052,8 +1998,6 @@ int lengthOfLongestSubstring(string s) {
     return res;
 }
 ```
-
-
 
 ### [19. 正则表达式匹配](https://leetcode-cn.com/problems/zheng-ze-biao-da-shi-pi-pei-lcof/)
 
@@ -2129,8 +2073,6 @@ public:
 };
 ```
 
-
-
 **解题思路 2**：动态规划（记忆化搜索），$n,m$ 分别表示 $s,p$ 的长度，状态转移复杂度是 $O(1)$，总的时间复杂度为 $O(nm)$。
 
 **状态表示** `f[i][j]`：
@@ -2190,8 +2132,6 @@ public:
 };
 ```
 
-
-
 ### [49. 丑数](https://leetcode-cn.com/problems/chou-shu-lcof/)
 
 **题意描述**：丑数是指：只包含质因子 `2,3,5` 的数。求按照从小到大的顺序的第 $n$ 个丑数。
@@ -2219,8 +2159,6 @@ int nthUglyNumber(int n) {
     return dp[n - 1];
 }
 ```
-
-
 
 ### [60. n个骰子的点数](https://leetcode-cn.com/problems/nge-tou-zi-de-dian-shu-lcof/)
 
@@ -2320,13 +2258,17 @@ vector<double> dicesProbability(int n) {
 
 
 
-
-
-
-
-
-
 ## 双指针
+
+用于解决一类**基于 "子段" 的统计问题**。子段：数组中连续的一段（下标范围可以用一个闭区间来表示）。这类题目的朴素做法都是两重循环的枚举，枚举左端点 $l$ 、右端点 $r$ （$l \leq r$） ，优化手段都是找到枚举中的冗余部分，将其去除。
+
+**优化策略：**
+
+- 固定右端点，看左端点的取值范围
+  - 例如左端点的取值范围是一个前缀，可以用{% lable [default]@前缀和 %} 等算法维护前缀信息
+- 移动一个端点，看另一个端点的变化情况
+  - 例如一个端点跟随另一个端点单调移动，{% lable [default]@滑动窗口 %}
+  - {% lable [default]@双指针扫描 %}
 
 ### [18. 删除链表的节点](https://leetcode-cn.com/problems/shan-chu-lian-biao-de-jie-dian-lcof/)
 
@@ -2363,8 +2305,6 @@ ListNode* deleteNode(ListNode* head, int val) {
 }
 ```
 
-
-
 ### [22. 链表中倒数第k个节点](https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof/)
 
 **题意描述**：输入一个链表，输出该链表中倒数第k个节点。（链表的尾节点是倒数第1个节点。）
@@ -2389,8 +2329,6 @@ ListNode* getKthFromEnd(ListNode* head, int k) {
     return p1;
 }
 ```
-
-
 
 ### [25. 合并两个排序的链表](https://leetcode-cn.com/problems/he-bing-liang-ge-pai-xu-de-lian-biao-lcof/)
 
@@ -2425,8 +2363,6 @@ ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
 }
 ```
 
-
-
 ### [52. 两个链表的第一个公共节点](https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/)
 
 **题意描述**：输入两个链表，找出它们的第一个公共节点。如果两个链表没有交点，返回空节点。
@@ -2456,8 +2392,6 @@ ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
 }
 ```
 
-
-
 ### [21. 调整数组顺序使奇数位于偶数前面](https://leetcode-cn.com/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/)
 
 **题意描述**：输入一个整数数组，我们需要调整数组中数字的顺序，使得所有奇数在数组的前半部分，所有偶数在数组的后半部分。
@@ -2484,8 +2418,6 @@ vector<int> exchange(vector<int>& nums) {
 }
 ```
 
-
-
 ### [57. 和为s的两个数字](https://leetcode-cn.com/problems/he-wei-sde-liang-ge-shu-zi-lcof/)
 
 **题意描述**：输入一个递增排序的数组和一个数字 s，在数组中查找两个数，使得它们的和正好是 s。如果有多对数字的和等于 s，则输出任意一对即可。
@@ -2510,8 +2442,6 @@ vector<int> twoSum(vector<int>& nums, int target) {
     return {-1, -1};
 }
 ```
-
-
 
 ### [58 - I. 翻转单词顺序](https://leetcode-cn.com/problems/fan-zhuan-dan-ci-shun-xu-lcof/)
 
@@ -2590,8 +2520,6 @@ string minNumber(vector<int>& nums) {
 }
 ```
 
-
-
 ### [ 61. 扑克牌中的顺子](https://leetcode-cn.com/problems/bu-ke-pai-zhong-de-shun-zi-lcof/)
 
 **题意描述**：从若干副扑克牌中随机抽 5 张牌，判断是不是一个顺子，即这 5 张牌是不是连续的。2～10为数字本身，A为1，J为11，Q为12，K为13，而大、小王为 0 ，可以看成任意数字。A 不能视为 14。
@@ -2625,8 +2553,6 @@ bool isStraight(vector<int>& nums) {
     return nums.back() - nums[cnt] <= 4;
 }
 ```
-
-
 
 ### [40. 最小的k个数](https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/)
 
@@ -2677,8 +2603,6 @@ void merge_sort(vector<int>& arr, int l, int r) {
     for (int i = l, j = 0; i <= r; i++, j++) arr[i] = tmp[j];
 }
 ```
-
-
 
 ### [41. 数据流中的中位数](https://leetcode-cn.com/problems/shu-ju-liu-zhong-de-zhong-wei-shu-lcof/)
 
@@ -2756,8 +2680,6 @@ int hammingWeight(uint32_t n) {
 }
 ```
 
-
-
 ### [65. 不用加减乘除做加法](https://leetcode-cn.com/problems/bu-yong-jia-jian-cheng-chu-zuo-jia-fa-lcof/)
 
 **题意描述**：写一个函数，求两个整数之和，要求在函数体内不得使用 “+”、“-”、“*”、“/” 四则运算符号。
@@ -2787,8 +2709,6 @@ int add(int a, int b) {
     return a;
 }
 ```
-
-
 
 ### [56 - I. 数组中数字出现的次数](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
 
@@ -2825,8 +2745,6 @@ vector<int> singleNumbers(vector<int>& nums) {
 }
 ```
 
-
-
 ### [56 - II. 数组中数字出现的次数 II](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-ii-lcof/)
 
 **题意描述**：在一个数组 `nums` 中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
@@ -2856,8 +2774,6 @@ int singleNumber(vector<int>& nums) {
 
 
 
-
-
 ## 数学
 
 ### [64. 求1+2+…+n](https://leetcode-cn.com/problems/qiu-12n-lcof/)
@@ -2880,8 +2796,6 @@ int sumNums(int n) {
     return res;
 }
 ```
-
-
 
 ### [39. 数组中出现次数超过一半的数字](https://leetcode-cn.com/problems/shu-zu-zhong-chu-xian-ci-shu-chao-guo-yi-ban-de-shu-zi-lcof/)
 
@@ -2915,8 +2829,6 @@ int majorityElement(vector<int>& nums) {
     return res;
 }
 ```
-
-
 
 ### [66. 构建乘积数组](https://leetcode-cn.com/problems/gou-jian-cheng-ji-shu-zu-lcof/)
 
@@ -2953,8 +2865,6 @@ vector<int> constructArr(vector<int>& a) {
     return b;
 }
 ```
-
-
 
 ### [14- I. 剪绳子](https://leetcode-cn.com/problems/jian-sheng-zi-lcof/)
 
@@ -3015,8 +2925,6 @@ int cuttingRope(int n) {
 }
 ```
 
-
-
 ### [14- II. 剪绳子 II](https://leetcode-cn.com/problems/jian-sheng-zi-ii-lcof/)
 
 **题意描述**：将一根长度为 $n$ 的绳子剪成整数长度的 $m$ 段（$m,n$ 都是整数，$n,m>1$），每段绳子的长度记为 $k[0],k[1]...k[m-1]$ 。请问  $k[0] \times k[1] \times...\times k[m-1]$ 可能的最大乘积是多少。
@@ -3046,9 +2954,7 @@ int cuttingRope(int n) {
 }
 ```
 
-
-
-### [57 - II. 和为s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
+### [57 - II. 和s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
 
 **题意描述**：输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
 
@@ -3087,8 +2993,6 @@ vector<vector<int>> findContinuousSequence(int target) {
 }
 ```
 
-
-
 ### [62. 圆圈中最后剩下的数字](https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/)
 
 **题意描述**：$0,1,···,n-1$ 这 $n$ 个数字排成一个圆圈，从数字 $0$ 开始，每次从这个圆圈里删除第 $m$ 个数字（删除后从下一个数字开始计数）。求出这个圆圈里剩下的最后一个数字。
@@ -3118,8 +3022,6 @@ int lastRemaining(int n, int m) {
     return (lastRemaining(n - 1, m) + m) % n;
 }
 ```
-
-
 
 ### [43. 1～n 整数中 1 出现的次数](https://leetcode-cn.com/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/)
 
@@ -3161,8 +3063,6 @@ public:
     }
 };
 ```
-
-
 
 ### [44. 数字序列中某一位的数字](https://leetcode-cn.com/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof/)
 
@@ -3284,8 +3184,6 @@ vector<int> spiralOrder(vector<vector<int>>& matrix) {
 }
 ```
 
-
-
 ### [31. 栈的压入、弹出序列](https://leetcode-cn.com/problems/zhan-de-ya-ru-dan-chu-xu-lie-lcof/)
 
 **题意描述**：输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。假设压入栈的所有数字均不相等。
@@ -3321,3 +3219,12 @@ public:
 };
 ```
 
+
+
+## 参考
+
+[^1]: 如何理解算法时间复杂度的表示法(http://www.zhihu.com/question/21387264)
+[^2]: 图解算法与数据结构(https://leetcode-cn.com/leetbook/detail/illustration-of-algorithm/)
+
+[^3]: [Master theorem](https://en.wikipedia.org/wiki/Master_theorem_(analysis_of_algorithms))
+[^4]:  https://www.acwing.com/
