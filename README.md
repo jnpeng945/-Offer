@@ -11,7 +11,9 @@ Algorithms
 
 # 算法笔记
 
+[Basic Course of Algorithms Notes](./doc/算法基础课笔记.md)
 
+[编程技巧](./doc/tricks.md)
 
 
 
@@ -25,5 +27,5 @@ Algorithms
 
 # 刷题网址
 
-[^1]: https://acwing.com/
-[^2]: https://leetcode-cn.com/
+- Acwing：https://acwing.com/
+- LeetCode：https://leetcode-cn.com/
