@@ -9,15 +9,28 @@ Algorithms
 
 
 
-# 算法笔记
+# 1 算法笔记
 
-[Basic Course of Algorithms Notes](./doc/算法基础课笔记.md)
+## 算法基础
 
-[编程技巧](./doc/tricks.md)
+- [模板](./doc/算法基础_模板.md)
+- 基础算法
+- 数据结构
+
+- [搜索与图论](./doc/算法基础3_搜索与图论.md)
+- 数学知识
+- 动态规划
+- 贪心
 
 
 
-# 算法题解
+## 补充
+
+- [编程技巧](./doc/tricks.md)
+
+
+
+# 2 算法题解
 
 [《剑指 Offer 第 2 版》题解](./doc/jianZhiOffer_2.md)
 
@@ -25,7 +38,7 @@ Algorithms
 
 
 
-# 刷题网址
+# 3 刷题网址
 
 - Acwing：https://acwing.com/
 - LeetCode：https://leetcode-cn.com/
